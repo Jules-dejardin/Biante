@@ -19,7 +19,7 @@ VSTPlugin.search(dir:"~/.vst3");
 // 4 register functions
 ServerBoot.add(~loadSamples); // fill up the ~buffers dict
 ServerBoot.add(~makeBusses);
-// ServerQuit.add(~cleanup);
+ServerQuit.add(~cleanup);
 
 // 5 boot serv
 s.waitForBoot({
@@ -40,14 +40,6 @@ s.waitForBoot({
 
 )
 
-~makeNodes;
-// s.boot;
-
-// ~loadSamples.value("samples/");
-
-// "synthdefs.scd".loadRelative;
-
-s.quit;
-
 
 s.plotTree;
+s.meter;

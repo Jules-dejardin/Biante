@@ -1,11 +1,6 @@
 
 (
 
-// s = Server.new(
-// 	"localhost",
-// 	NetAddr("localhost", 57112)
-// );
-
 // // ServerOptions.outDevices;
 // s.options.outDevice_(
 // 	"Focusrite USB Au"
@@ -23,31 +18,8 @@ s.options.sampleRate_(48000);
 s.options.memSize_(2.pow(20)); // ~1 GB of active memory
 // s.newBusAllocators;
 
-// ServerBoot.removeAll;
-// ServerTree.removeAll;
-// ServerQuit.removeAll;
-
-
-
-
-
-
 )
-//
-// s.boot;
-//
-// s.quit;
-//
-// ~makeBuffers.value("./samples/");
-//
-// b = nil;
-//
-// b[\goutes][0];
-//
-// b[\goutes][0].play;
-//
-// { PinkNoise.ar(0.2) + Saw.ar(660, 0.2) }.play;
-//
+
 // (
 // OSCFunc(
 // 	{
@@ -93,9 +65,4 @@ s.options.memSize_(2.pow(20)); // ~1 GB of active memory
 //
 // );
 //
-//
-//
-//
-// s.meter;
-// s.plotTree;
-// //XLine
+
