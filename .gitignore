@@ -1,0 +1,10 @@
+*.wav
+*.WAV
+*.aiff
+*.mp3
+
+desktop.ini
+
+.vscode
+.idea
+
