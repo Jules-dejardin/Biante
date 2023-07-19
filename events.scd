@@ -7,46 +7,45 @@
 	e = Dictionary.new;
 
 	e.add(\init -> {
+
 		~one = Synth(\radio, [\in, 0, \out, ~bus[\delayValh] , \amp, 0], ~mainGrp);//radio
 		~recBuff = Buffer.alloc(s, s.sampleRate * 5, 1);
 		//~recBuff.plot;
 		~radioRead = Synth(\AudioInputMono, [\input, 0, \out, ~bus[\radioBus], \amp, 1], ~radioGrp);
 		~radioPtr = Synth(\ptr, [\buf, ~recBuff, \out, ~bus[\ptrBus]], ~ptrGrp);
 		~radioRecord = Synth(\rec, [\ptrIn, ~bus[\ptrBus], \micIn, ~bus[\radioBus], \buf, ~recBuff], ~recGrp);
-
-		~vstDelaySynth.open("ValhallaFreqEcho.vst3", editor: true, verbose:true);
-		~vstDelaySynth.editor;
-
-		~vstMassiveSynth.open("ValhallaSupermassive.vst3", editor: true, verbose:true);
+		~vstDelaySynth.open("ValhallaFreqEcho", editor: true, verbose:true);
+		~vstMassiveSynth.open("ValhallaSupermassive", editor: true, verbose:true);
 		~vstMassiveSynth.editor;
 	});
 
-	e.add(\event1 -> {
-		~clarWeird2.stop;
-		~clarWeird3.stop;
-		~clarWeird4.stop;
-		~chord.stop;
-		~snow.set(\relOut, 1, \gate,0);
-		//~g.do({ arg n; n.set(\gate, 0) });
+	e.add(\event9
+		-> {
+			~clarWeird2.stop;
+			~clarWeird3.stop;
+			~clarWeird4.stop;
+			~chord.stop;
+			~snow.set(\relOut, 1, \gate,0);
+			//~g.do({ arg n; n.set(\gate, 0) });
 
-		~clarWeird = Pbind(
-			\instrument, \clarGran,
-			\buf, ~buffers[\oizo][0,1,2],
-			\sync, 0,
-			\panRand, 1,
-			\gDur, Pexprand(0.03, 0.3, inf),
-			\dens, Pexprand(10,50, inf),
-			\pos, Pexprand(0.01,1,inf),
-			\c0, 0.1,
-			\rel, 0.1,
-			\sus, 0.5,
-			\amp, 1,
-			\group, ~mainGrp,
-			\out, 0,
-		).play;
+			~clarWeird = Pbind(
+				\instrument, \clarGran,
+				\buf, ~buffers[\oizo][0,1,2],
+				\sync, 0,
+				\panRand, 1,
+				\gDur, Pexprand(0.03, 0.3, inf),
+				\dens, Pexprand(10,50, inf),
+				\pos, Pexprand(0.01,1,inf),
+				\c0, 0.1,
+				\rel, 0.1,
+				\sus, 0.5,
+				\amp, 1,
+				\group, ~mainGrp,
+				\out, 0,
+			).play;
 	});
 
-	e.add(\event2 -> {
+	e.add(\event10 -> {
 		~ball.stop;
 		~clarWeird.stop;
 		~clarWeird4.stop;
@@ -150,6 +149,7 @@
 				],~granGrp);
 			});
 		)
+
 	});
 
 	e.add(\event5 -> {
@@ -187,30 +187,72 @@
 		)
 	});
 
-	e.add(\event7 -> {
+	e.add(\event11 -> {(
+		~medium = Routine{
+			var sustain = 6, transition = 4, overlap = 5;
+			var period = transition*2+sustain/overlap;
+			1.5.wait;
+			inf.do {
+				Synth(\medium, [
+					\atk, transition,
+					\sus, sustain,
+					\rel, transition,
+					\pan, 1.0.rand2,
+					\freqs, {50.0.rrand(5000)}.dup(12),
+					\rings, {0.1.rrand(2)}.dup(12)
+				]);
+				period.wait;
+			}
+		};
+		~medium.play;
+	)});
+
+	e.add(\event14 -> {
 		(
 			~bass = Pbind(
-			\instrument, \bass,
-			\dur, Pwhite(1,7,inf),
-			\midinote, Pxrand([
-				[23,35,54,63,64],
-				[45,52,54,59,61,64],
-				[28,40,47,56,59,63],
-				[42,52,57,61,63],
-			], 10),
-			\detune, Pexprand(0.05,0.2,inf),
-			\cfmin, 100,
-			\cfmax, 1500,
-			\rqmin, Pexprand(0.01, 0.15, inf),
-			\atk, Pwhite(2.0,2.5,inf),
-			\rel, Pwhite(6.5,10.0,inf),
-			\ldb, 6,
-			\amp, Pfunc({~volumeSynth}, inf),
-			\group, ~mainGrp,
-			\out,0,
-		).play;
+				\instrument, \bass,
+				\dur, Pwhite(1,7,inf),
+				\midinote, Pxrand([
+					[23,35,54,63,64],
+					[45,52,54,59,61,64],
+					[28,40,47,56,59,63],
+					[42,52,57,61,63],
+				], 10),
+				\detune, Pexprand(0.05,0.2,inf),
+				\cfmin, 100,
+				\cfmax, 1500,
+				\rqmin, Pexprand(0.01, 0.15, inf),
+				\atk, Pwhite(2.0,2.5,inf),
+				\rel, Pwhite(6.5,10.0,inf),
+				\ldb, 6,
+				\amp, Pfunc({~volumeSynth}, inf),
+				\group, ~mainGrp,
+				\out,0,
+			).play;
 		)
 	});
+
+	e.add(\event15 -> {(
+		~cloches = Routine{
+			var sustain = 8, transition = 1, overlap = 4;
+			var period = transition * 2 + sustain / overlap;
+			0.5.wait;            // wait for the synthdef to be sent to the server
+			inf.do{
+				Synth(\cloches, [
+					\atk, transition,
+					\sus, sustain,
+					\rel, transition,
+					\pan, 1.0.rand2,
+					\freqs, {200.0.rrand(5000)}.dup(12),
+					\rings, {0.1.rrand(2)}.dup(12)
+				]);
+				period.wait;
+			}
+		};
+		~cloches.play;
+	)});
+
+	// ~cloches.stop;
 
 	//page 1 boutons
 	e.add(\sample1 -> {
@@ -263,10 +305,9 @@
 
 
 	//page 2 boutons
-
 	e.add(\sample9 -> {
 		(
-		Synth(\audioBuf, [\buf, ~buffers[\craque][[0,1,2,3].choose], \loop, 0, \out, ~bus[\satura], \amp, 0.9], ~mainGrp)
+			Synth(\audioBuf, [\buf, ~buffers[\craque][[0,1,2,3].choose], \loop, 0, \out, ~bus[\satura], \amp, 0.9], ~mainGrp)
 		)
 	});
 
@@ -289,6 +330,10 @@
 		)
 	});
 
+	e.add(\sample13 -> {()});
+	e.add(\sample14 -> {()});
+	e.add(\sample15 -> {()});
+	e.add(\sample16 -> {()});
 	/*Synth(\audioBuf, [\buf, ~buffers[\percu][0], \loop, 0, \out, ~bus[\satura], \amp, 0.9],~mainGrp);*/
 
 	e.add(\quit -> {
@@ -300,6 +345,8 @@
 		~water.free;
 		~snow.set(\relOut, 1, \gate,0);
 		~g.do({ arg n; n.set(\gate, 0) });
+		~medium.stop;
+		~cloches.stop;
 	});
 
 	e.add(\mayday -> {
@@ -317,42 +364,64 @@
 		~radioPtr.free;
 		~radioRecord.free;
 		~snow.free;
+		~medium.stop;
+		~cloches.stop;
 		MIDIIn.disconnectAll;
 		s.quit;
 	});
-
 
 	MIDIdef.noteOn(\controller, {
 		arg val, num, chan;
 		[val, num, chan].postln;
 		case
-		{num==73 && val==127 }{e[\event1].value;"witches".postln;}
-		{num==74 && val==127 }{e[\event2].value;"voix gran".postln;}
-		{num==75 && val==127 }{e[\event3].value;"synth nappa".postln;}
-		{num==76 && val==127 }{e[\event4].value;"radio gran".postln;}
-		{num==41 && val==127 }{e[\event5].value;"mer".postln;}
-		{num==42 && val==127 }{e[\event6].value;"melodie".postln;}
-		{num==43 && val==127 }{e[\event7].value;"bass".postln;}
-		{num==57 && val==127 && chan==1}{e[\sample1].value;"Boat".postln;}
+		//nappes sûr
+		{num==76 && val==127 }{e[\event4].value;"Nappe radio".postln;}
+		// nappes tableau 1
+		{num==73 && val==127 && chan==1}{e[\event1].value;"vide".postln;}
+		{num==74 && val==127 && chan==1}{e[\event2].value;"vide".postln;}
+		{num==75 && val==127 && chan==1}{e[\event3].value;"Nappe synth".postln;}
+		{num==41 && val==127 && chan==1}{e[\event5].value;"Nappe mer".postln;}
+		{num==42 && val==127 && chan==1}{e[\event6].value;"Transi harpe".postln;}
+		{num==43 && val==127 && chan==1}{e[\event7].value;"vide".postln;}
+		{num==44 && val==127 && chan==1}{e[\event8].value;"vide".postln;}
+		// nappes tableau 2
+		{num==73 && val==127 && chan==2}{e[\event9].value;"Nappe oiseaux".postln;}
+		{num==74 && val==127 && chan==2}{e[\event10].value;"Nappe voix".postln;}
+		{num==75 && val==127 && chan==2}{e[\event11].value;"medium".postln;}
+		{num==41 && val==127 && chan==2}{e[\event12].value;"vide".postln;}
+		{num==42 && val==127 && chan==2}{e[\event13].value;"vide".postln;}
+		{num==43 && val==127 && chan==2}{e[\event14].value;"Nappe bass".postln;}
+		{num==44 && val==127 && chan==2}{e[\event15].value;"Nappe cloches".postln;}
+		// samples tableau 1
+		{num==57 && val==127 && chan==1}{e[\sample1].value;"Bateau".postln;}
 		{num==58 && val==127 && chan==1}{e[\sample2].value;"Glouss".postln;}
-		{num==59 && val==127 && chan==1}{e[\sample3].value;"Clic".postln;}
-		{num==60 && val==127 && chan==1}{e[\sample4].value;"Bouche".postln;}
-		{num==89 && val==127 && chan==1}{e[\sample5].value;"Craquement".postln;}
-		{num==90 && val==127 && chan==1}{e[\sample6].value;"Percu".postln;}
+		{num==59 && val==127 && chan==1}{e[\sample3].value;"Dauphins".postln;}
+		{num==60 && val==127 && chan==1}{e[\sample4].value;"Baleins".postln;}
+		{num==89 && val==127 && chan==1}{e[\sample5].value;"Rien".postln;}
+		{num==90 && val==127 && chan==1}{e[\sample6].value;"Verre vrac".postln;}
 		{num==91 && val==127 && chan==1}{e[\sample7].value;"Verre".postln;}
 		{num==92 && val==127 && chan==1}{e[\sample8].value;"Goutes".postln;}
-		{num==57 && val==127 && chan==2}{e[\sample9].value;"Verre Vrac".postln;}
-		{num==58 && val==127 && chan==2}{e[\sample10].value;"Dauphins".postln;}
+		// samples tableau 2
+		{num==57 && val==127 && chan==2}{e[\sample9].value;"Craquement".postln;}
+		{num==58 && val==127 && chan==2}{e[\sample10].value;"Humain".postln;}
 		{num==59 && val==127 && chan==2}{e[\sample11].value;"Oiseau FX".postln;}
-		{num==60 && val==127 && chan==2}{e[\sample12].value;"Harpe".postln;}
+		{num==60 && val==127 && chan==2}{e[\sample12].value;"Clic".postln;}
+		{num==89 && val==127 && chan==2}{e[\sample13].value;"Rien".postln;}
+		{num==90 && val==127 && chan==2}{e[\sample14].value;"Rien".postln;}
+		{num==91 && val==127 && chan==2}{e[\sample15].value;"Rien".postln;}
+		{num==92 && val==127 && chan==2}{e[\sample16].value;"Rien".postln;}
+		//device (sur launch ctrl XL)
 		{num==105 && val==127 }{e[\init].value;"Initialisation".postln;}
-		{num==108 && val==127 }{e[\mayday].value;"Panique bouton".postln;}
+		// Mute (sur launch ctrl XL)
 		{num==106 && val==127 }{e[\quit].value;"quit".postln;}
+		// Solo (sur launch ctrl XL)
 		{num==107 && val==127 }{
 			~freeze = val.linexp(0, 127, 0, 1);
 			~one.set(\t_trig, ~freeze);
 			"freeze".postln;
 		}
+		//record arm (sur launch ctrl XL)
+		{num==108 && val==127 }{e[\mayday].value;"Panique bouton".postln;}
 		{true}{nil};
 	});
 
@@ -360,11 +429,15 @@
 		arg val, ccNum, channel;
 		[val, ccNum, channel].postln;
 
-		if(ccNum == 77 /*&& channel == 1*/, { ~volumeSynth = val.linexp(0, 127, 0.001, 0.7);  });
-		//if(ccNum == 20 /*&& channel == 1*/, { ~sustainClar = val.linexp(0, 127, 0.2, 1.2);  });
-		//if(ccNum == 79 /*&& channel == 1*/, { ~grainDens = val.linexp(0, 127, 1, 10);  });
-		if(ccNum == 80 /*&& channel == 1*/, { ~test = val.linexp(0, 127, -0.70, 0); });
-		if(ccNum == 83 /*&& channel == 1*/, { ~mixBrick = val.linexp(0, 127, -1, 1) }); // dry/wet du BrickWall
+		if(ccNum == 77 /*&& channel == 1*/, {
+			~volumeSynth = val.linexp(0, 127, 0.001, 0.7);
+		});
+		if(ccNum == 80 /*&& channel == 1*/, {
+			~test = val.linexp(0, 127, -0.70, 0);
+		});
+		if(ccNum == 83 /*&& channel == 1*/, {
+			~mixBrick = val.linexp(0, 127, -1, 1)
+		}); // dry/wet du BrickWall
 
 		if(ccNum == 80 /*&& channel == 1*/, {
 			~volValh = val.linlin(0, 127, 0, 1);
@@ -374,7 +447,7 @@
 		});
 
 		if(ccNum == 79 /*&& channel == 1*/, {
-			~mixDel = val.linlin(0, 127, 0, 1);
+			~mixDel = val.linlin(0, 127, 0, 0.5);
 			~vstDelaySynth.synth.set(\mix, ~mixDel);
 			"Mix Delay".postln;
 			~mixDel.postln;
@@ -432,6 +505,7 @@
 		//~vstDelaySynth.editor;
 		//~vstMassiveSynth.editor;
 
+
 		//wipe du filtre brickWall
 		if(ccNum == 55 /*&& channel == 1*/, {
 			~wipeBrick = val.linexp(0, 127, -0.5, -0.999);
@@ -472,15 +546,15 @@
 			"delay decay".postln;
 			~delTrail.postln;
 		});
-/*
+		/*
 		//volume petits sons
 		if(ccNum == 19 && channel == 1, {
-			~volSound = val.linlin(0, 127, 0, 2).round(0.1);
-			~saturator.set(\amp, ~volSound);
-			"Volume samples".postln;
-			~volSound.postln;
+		~volSound = val.linlin(0, 127, 0, 2).round(0.1);
+		~saturator.set(\amp, ~volSound);
+		"Volume samples".postln;
+		~volSound.postln;
 		});
-*/
+		*/
 		//mix saturation
 		if(ccNum == 81 /*&& channel == 1*/, {
 			~mixSat = val.linlin(0, 127, 0, 0.5);
