@@ -14,7 +14,7 @@
 ~projectPath=PathName(thisProcess.nowExecutingPath).parentPath;
 ~sampleDirPath=~projectPath++"samples/";
 
-VSTPlugin.search(dir:"~/.vst3");
+// VSTPlugin.search(dir:"~/.vst3");
 
 // 4 register functions
 ServerBoot.add(~loadSamples); // fill up the ~buffers dict
@@ -25,11 +25,9 @@ ServerQuit.add(~cleanup);
 s.waitForBoot({
 	s.sync; //wait the server to be ok
 	"synthdefs.scd".loadRelative;
-/*
-	~radio = Synth(\radio, [\in, 0, \out, ~bus[\delayValh]]);
-	~radio.set(\amp, 1);
-	~radio.free;
-*/
+
+	VSTPlugin.search;
+
 	s.sync;
 	ServerTree.add(~makeNodes);
 	ServerTree.add(~makeEvents);
