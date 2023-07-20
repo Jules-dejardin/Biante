@@ -2,7 +2,7 @@
 
 ~makeEvents = {
 	MIDIClient.init;
-    MIDIIn.connectAll;
+    //MIDIIn.connectAll;
 
 	e = Dictionary.new;
 
