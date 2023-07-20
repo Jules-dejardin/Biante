@@ -393,7 +393,7 @@
 		{num==74 && val==127 && chan==2}{e[\event10].value;"Nappe voix".postln;}
 		{num==75 && val==127 && chan==2}{e[\event11].value;"medium".postln;}
 		{num==41 && val==127 && chan==2}{e[\event12].value;"vide".postln;}
-		{num==42 && val==127 && chan==2}{e[\event13].value;"Grenouilles".postln;}
+		{num==42 && val==127 && chan==2}{e[\event13].value;"vide".postln;}
 		{num==43 && val==127 && chan==2}{e[\event14].value;"Nappe bass".postln;}
 		{num==44 && val==127 && chan==2}{e[\event15].value;"Nappe cloches".postln;}
 		// samples tableau 1
@@ -410,7 +410,7 @@
 		{num==58 && val==127 && chan==2}{e[\sample10].value;"Humain".postln;}
 		{num==59 && val==127 && chan==2}{e[\sample11].value;"Oiseau FX".postln;}
 		{num==60 && val==127 && chan==2}{e[\sample12].value;"Clic".postln;}
-		{num==89 && val==127 && chan==2}{e[\sample13].value;"Rien".postln;}
+		{num==89 && val==127 && chan==2}{e[\sample13].value;"Grenouilles".postln;}
 		{num==90 && val==127 && chan==2}{e[\sample14].value;"Rien".postln;}
 		{num==91 && val==127 && chan==2}{e[\sample15].value;"Rien".postln;}
 		{num==92 && val==127 && chan==2}{e[\sample16].value;"Rien".postln;}
