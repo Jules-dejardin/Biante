@@ -131,7 +131,7 @@ Out.ar(out, sig);
 
 //nappes douces
 SynthDef(\medium,{
-arg out=0, freqs=#[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], rings=#[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], atk=5, sus=8, rel=5, pan=0, amp=0.5;
+arg out=0, freqs=#[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], rings=#[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], atk=5, sus=8, rel=5, pan=0, amp=1.8;
     var env, sig, input;
 env = EnvGen.kr(Env.linen(atk, sus, rel, amp, 4), doneAction: Done.freeSelf);
 input = BrownNoise.ar(0.00012);
@@ -215,7 +215,7 @@ SynthDef(\granRadio,{
 		grainEnv
 	);
 
-	sig = sig * env *amp;
+	sig = sig * env * amp;
 
 	Out.ar(out,sig);
 }).add;

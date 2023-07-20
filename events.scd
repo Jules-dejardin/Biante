@@ -131,7 +131,7 @@
 					\buf, ~recBuff,
 					\out, ~bus[\satura],
 					\atk, 0.01,
-					\rel, 0.5,
+					\rel, 0.3,
 					\gate, 1,
 					\sync, 1,
 					\dens, exprand(20,40),
@@ -140,7 +140,7 @@
 					\rate, 1,
 					\rateRand, 2.midiratio,
 					\pan, 0,
-					\panRand, 0.5,
+					\panRand, 1,
 					\grainEnv, -1,
 					\ptrBus, ~bus[\ptrBus],
 					\ptrSampleDelay, n.linlin(0,4,20000,s.sampleRate*2),
@@ -313,24 +313,28 @@
 
 	e.add(\sample10 -> {
 		(
-			Synth(\audioBuf, [\buf, ~buffers[\humain][[0,1,2].choose], \loop, 0, \out, ~bus[\satura], \amp, 0.9], ~mainGrp);
+			Synth(\audioBuf, [\buf, ~buffers[\humain][[0,1,2].choose], \loop, 0, \out, ~bus[\satura], \amp, 1.2], ~mainGrp);
 		)
 
 	});
 
 	e.add(\sample11 -> {
 		(
-			Synth(\audioBuf, [\buf, ~buffers[\fxoizo][[0,1,2,3,4,5].choose], \loop, 0, \out, ~bus[\satura], \amp, 0.9],~mainGrp);
+			Synth(\audioBuf, [\buf, ~buffers[\fxoizo][[0,1,2,3,4,5].choose], \loop, 0, \out, ~bus[\satura], \amp, 1],~mainGrp);
 		)
 	});
 
 	e.add(\sample12 -> {
 		(
-			Synth(\audioBuf, [\buf, ~buffers[\clic][[0,1,2,3].choose], \loop, 0, \out, ~bus[\satura], \amp, 1],~mainGrp);
+			Synth(\audioBuf, [\buf, ~buffers[\clic][[0,1,2,3].choose], \loop, 0, \out, ~bus[\satura], \amp, 1.2],~mainGrp);
 		)
 	});
 
-	e.add(\sample13 -> {()});
+	e.add(\sample13 -> {
+		(
+			Synth(\audioBuf, [\buf, ~buffers[\grenouilles][[0,1,2,3,4,5,6,7].choose], \loop, 0, \out, ~bus[\satura], \amp, 1.2],~mainGrp);
+	)});
+
 	e.add(\sample14 -> {()});
 	e.add(\sample15 -> {()});
 	e.add(\sample16 -> {()});
@@ -343,8 +347,8 @@
 		~clarWeird4.stop;
 		~chord.stop;
 		~water.free;
-		~snow.set(\relOut, 1, \gate,0);
-		~g.do({ arg n; n.set(\gate, 0) });
+		~snow.set(\relOut, 5, \gate,0);
+		~g.do({ arg n; n.set(\gate, 0, \rel, 10) });
 		~medium.stop;
 		~cloches.stop;
 	});
@@ -389,7 +393,7 @@
 		{num==74 && val==127 && chan==2}{e[\event10].value;"Nappe voix".postln;}
 		{num==75 && val==127 && chan==2}{e[\event11].value;"medium".postln;}
 		{num==41 && val==127 && chan==2}{e[\event12].value;"vide".postln;}
-		{num==42 && val==127 && chan==2}{e[\event13].value;"vide".postln;}
+		{num==42 && val==127 && chan==2}{e[\event13].value;"Grenouilles".postln;}
 		{num==43 && val==127 && chan==2}{e[\event14].value;"Nappe bass".postln;}
 		{num==44 && val==127 && chan==2}{e[\event15].value;"Nappe cloches".postln;}
 		// samples tableau 1
