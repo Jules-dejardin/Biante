@@ -115,33 +115,33 @@ SynthDef(\bass, {
 
 //nappes cloches
 SynthDef(\cloches, {
-arg out=0, amp=0.5, freqs=#[0,0,0,0,0,0,0,0,0,0,0,0], rings=#[0,0,0,0,0,0,0,0,0,0,0,0], atk=5, sus=7, rel=6, pan=0;
-var sig, env, trig;
+	arg out=0, amp=0.5, freqs=#[0,0,0,0,0,0,0,0,0,0,0,0], rings=#[0,0,0,0,0,0,0,0,0,0,0,0], atk=5, sus=7, rel=6, pan=0;
+	var sig, env, trig;
 
-env = EnvGen.kr(Env.linen(atk, sus, rel, amp, 4), doneAction: Done.freeSelf);
-trig = Decay.ar(Impulse.ar(Rand(0.8, 2.2)), 0.03, ClipNoise.ar(0.01));
-sig = Klank.ar(
-`[freqs, nil, rings],    // '=tableau de tableau
-trig                    // trigger de cloches
+	env = EnvGen.kr(Env.linen(atk, sus, rel, amp, 4), doneAction: Done.freeSelf);
+	trig = Decay.ar(Impulse.ar(Rand(0.8, 2.2)), 0.03, ClipNoise.ar(0.01));
+	sig = Klank.ar(
+		`[freqs, nil, rings],    // '=tableau de tableau
+		trig                    // trigger de cloches
     );
-sig = Pan2.ar(sig*env, pan);
+	sig = Pan2.ar(sig*env, pan);
 
-Out.ar(out, sig);
+	Out.ar(out, sig);
 }).add;
 
 //nappes douces
 SynthDef(\medium,{
-arg out=0, freqs=#[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], rings=#[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], atk=5, sus=8, rel=5, pan=0, amp=0.5;
-    var env, sig, input;
-env = EnvGen.kr(Env.linen(atk, sus, rel, amp, 4), doneAction: Done.freeSelf);
-input = BrownNoise.ar(0.00012);
-sig = Klank.ar(
-        `[freqs, nil, rings],     // specs
-        input                 // input
-    );
-sig = Pan2.ar(sig*env, pan);
+	arg out=0, freqs=#[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], rings=#[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], atk=5, sus=8, rel=5, pan=0, amp=0.8;
+	var env, sig, input;
+	env = EnvGen.kr(Env.linen(atk, sus, rel, amp, 4), doneAction: Done.freeSelf);
+	input = BrownNoise.ar(0.00012);
+	sig = Klank.ar(
+		`[freqs, nil, rings],     // specs
+		input                 // input
+	);
+	sig = Pan2.ar(sig*env, pan);
 
-    Out.ar(out, sig);
+	Out.ar(out, sig);
 }).add;
 
 //Granulateur
