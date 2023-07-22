@@ -7,7 +7,6 @@
 	e = Dictionary.new;
 
 	e.add(\init -> {
-
 		~one = Synth(\radio, [\in, 0, \out, ~bus[\delayValh] , \amp, 0], ~mainGrp);//radio
 		~recBuff = Buffer.alloc(s, s.sampleRate * 5, 1);
 		//~recBuff.plot;
@@ -16,7 +15,12 @@
 		~radioRecord = Synth(\rec, [\ptrIn, ~bus[\ptrBus], \micIn, ~bus[\radioBus], \buf, ~recBuff], ~recGrp);
 		~vstDelaySynth.open("ValhallaFreqEcho", editor: true, verbose:true);
 		~vstMassiveSynth.open("ValhallaSupermassive", editor: true, verbose:true);
-		~vstMassiveSynth.editor;
+	});
+
+    e.add(\loadPresets-> {
+		~vstMassiveSynth.loadPreset("dirtyVerb1");
+		// ~vstMassiveSynth.editor;
+		// ~vstMassiveSynth.savePreset("dirtyVerb1");
 	});
 
 	e.add(\event9
@@ -603,6 +607,10 @@
 			~g.do({ arg n; n.set(\rate, ~rateGran) });
 			"rate granulateur".postln;
 			~rateGran.postln;
+		});
+
+		if(ccNum == 105 /*&& channel == 1*/,{
+			e[\loadPresets].value;"Load Presets".postln;
 		});
 	});
 };
