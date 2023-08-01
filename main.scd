@@ -1,5 +1,3 @@
-
-
 (
 // Load factory
 "genericFunctions.scd".loadRelative;
@@ -7,8 +5,8 @@
 "nodes.scd".loadRelative;
 "events.scd".loadRelative;
 "server.scd".loadRelative;
-
-// ###### initialise global var ######
+//s.plotTree;
+// ###### <initialise global var ######
 
 ~out = 0;
 ~projectPath=PathName(thisProcess.nowExecutingPath).parentPath;
@@ -37,7 +35,3 @@ s.waitForBoot({
 });
 
 )
-
-
-s.plotTree;
-s.meter;

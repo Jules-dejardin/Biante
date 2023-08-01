@@ -2,7 +2,7 @@
 
 ~makeEvents = {
 	MIDIClient.init;
-    MIDIIn.connectAll;
+    //MIDIIn.connectAll;
 
 	e = Dictionary.new;
 
@@ -21,18 +21,22 @@
 		~vstMassiveSynth.loadPreset("dirtyVerb1");
 		// ~vstMassiveSynth.editor;
 		// ~vstMassiveSynth.savePreset("dirtyVerb1");
+    e.add(\loadPresets-> {
+		~vstMassiveSynth.loadPreset("dirtyVerb1");
+		// ~vstMassiveSynth.editor;
+		// ~vstMassiveSynth.savePreset("dirtyVerb1");
 	});
 
 	e.add(\event9
 		-> {
-			~clarWeird2.stop;
-			~clarWeird3.stop;
-			~clarWeird4.stop;
+			~boucheGran.stop;
+			~mer.stop;
+			~granOizo.stop;
 			~chord.stop;
 			~snow.set(\relOut, 1, \gate,0);
 			//~g.do({ arg n; n.set(\gate, 0) });
 
-			~clarWeird = Pbind(
+			~granOizo = Pbind(
 				\instrument, \clarGran,
 				\buf, ~buffers[\oizo][0,1,2],
 				\sync, 0,
@@ -50,15 +54,13 @@
 	});
 
 	e.add(\event10 -> {
-		~ball.stop;
-		~clarWeird.stop;
-		~clarWeird4.stop;
-		~clarWeird3.stop;
+		~granOizo.stop;
+		~mer.stop;
 		~chord.stop;
 		~snow.set(\relOut, 1, \gate,0);
 		//~g.do({ arg n; n.set(\gate, 0) });
 
-		~clarWeird2 = Pbind(
+		~boucheGran = Pbind(
 			\instrument, \clarGran,
 			\buf,~buffers[\humain][2],
 			\sync, 0,
@@ -76,11 +78,11 @@
 	});
 
 	e.add(\event3 -> {
-		~ball.stop;
-		~clarWeird.stop;
-		~clarWeird2.stop;
-		~clarWeird4.stop;
+		~granOizo.stop;
+		~boucheGran.stop;
+		~mer.stop;
 		~marimba.stop;
+		~chord.stop;
 
 		~chord = Pbind(
 			\instrument, \bpfsaw,
@@ -102,36 +104,17 @@
 			\group, ~mainGrp,
 			\out, 0,
 		).play;
-
-		~chord2room = Pbind(
-			\instrument, \bpfsaw,
-			\dur, Pwhite(1,7,inf),
-			\midinote, Pxrand([
-				[23,35,54,63,64],
-				[45,52,54,59,61,64],
-				[28,40,47,56,59,63],
-				[42,52,57,61,63],
-			], 10),
-			\detune, Pexprand(0.05,0.2,inf),
-			\cfmin, 100,
-			\cfmax, 1500,
-			\rqmin, Pexprand(0.01, 0.15, inf),
-			\atk, Pwhite(2.0,2.5,inf),
-			\rel, Pwhite(6.5,10.0,inf),
-			\ldb, 6,
-			\amp, Pfunc({~volumeSynth}, inf),
-			\group, ~mainGrp,
-			\out,0,
-		).play;
 	});
 
 	e.add(\event4 -> {
+
+		~g.do({ arg n; n.set(\gate, 0, \rel, 1) });
 		(
 			~recBuff.zero;
 			~g =  5.collect({
 				arg n;
 				Synth(\granRadio, [
-					\amp, 0.7,
+					\amp, 0.8,
 					\buf, ~recBuff,
 					\out, ~bus[\satura],
 					\atk, 0.01,
@@ -158,13 +141,13 @@
 
 	e.add(\event5 -> {
 
-		~clarWeird.stop;
-		~clarWeird2.stop;
-		~clarWeird3.stop;
+		~granOizo.stop;
+		~boucheGran.stop;
+		~mer.stop;
 		~chord.stop;
 		//~g.do({ arg n; n.set(\gate, 0) });
 
-		~clarWeird4 = Pbind(
+		~mer = Pbind(
 			\instrument, \clarGran,
 			\buf,~buffers[\mer][0],
 			\sync, 0,
@@ -181,17 +164,20 @@
 			\out, ~bus[\massive],
 		).play;
 
+		~snow.free;
 		~snow = Synth(\highNap, [\amp,0.8]);
 
 	});
 
 	e.add(\event6 -> {
 		(
+			~melo.free;
 			~melo = Synth(\audioBuf, [\buf, ~buffers[\melo][0], \loop, 0, \out, 0, \amp, 1],~mainGrp);
 		)
 	});
 
 	e.add(\event11 -> {(
+		~medium.stop;
 		~medium = Routine{
 			var sustain = 6, transition = 4, overlap = 5;
 			var period = transition*2+sustain/overlap;
@@ -212,6 +198,8 @@
 	)});
 
 	e.add(\event14 -> {
+
+		~bass.stop;
 		(
 			~bass = Pbind(
 				\instrument, \bass,
@@ -339,18 +327,29 @@
 			Synth(\audioBuf, [\buf, ~buffers[\grenouilles][[0,1,2,3,4,5,6,7].choose], \loop, 0, \out, ~bus[\satura], \amp, 1.2],~mainGrp);
 	)});
 
-	e.add(\sample14 -> {()});
+	e.add(\sample14 -> {
+		(
+			~cri = Routine{
+	var period = 0.2;
+	4.do{
+		Synth(\cricket, [\amp, 0.1, \sus, 0.15, \harmo, 3000, \freq, 55, \out, ~bus[\satura]]);
+		period.wait;
+	};
+};
+~cri.play;
+	)});
 	e.add(\sample15 -> {()});
 	e.add(\sample16 -> {()});
 	/*Synth(\audioBuf, [\buf, ~buffers[\percu][0], \loop, 0, \out, ~bus[\satura], \amp, 0.9],~mainGrp);*/
 
 	e.add(\quit -> {
-		~clarWeird.stop;
-		~clarWeird2.stop;
-		~clarWeird3.stop;
-		~clarWeird4.stop;
+		~granOizo.stop;
+		~boucheGran.stop;
+		~mer.stop;
 		~chord.stop;
 		~water.free;
+		~snow.free;
+		~medium.stop;
 		~snow.set(\relOut, 5, \gate,0);
 		~g.do({ arg n; n.set(\gate, 0, \rel, 10) });
 		~medium.stop;
@@ -358,24 +357,8 @@
 	});
 
 	e.add(\mayday -> {
-		~one.free;
-		~oneRoom.free;
-		~two.free;
-		~three.free;
-		~fiveM.free;
-		~fiveMRev.free;
-		~sixMRev.free;
-		~seven.free;
-		~eight.free;
-		~recBuff.free;
-		~radioRead.free;
-		~radioPtr.free;
-		~radioRecord.free;
-		~snow.free;
-		~medium.stop;
-		~cloches.stop;
 		MIDIIn.disconnectAll;
-		s.quit;
+		Server.killAll;
 	});
 
 	MIDIdef.noteOn(\controller, {
@@ -415,19 +398,13 @@
 		{num==59 && val==127 && chan==2}{e[\sample11].value;"Oiseau FX".postln;}
 		{num==60 && val==127 && chan==2}{e[\sample12].value;"Clic".postln;}
 		{num==89 && val==127 && chan==2}{e[\sample13].value;"Grenouilles".postln;}
-		{num==90 && val==127 && chan==2}{e[\sample14].value;"Rien".postln;}
+		{num==90 && val==127 && chan==2}{e[\sample14].value;"Crickets".postln;}
 		{num==91 && val==127 && chan==2}{e[\sample15].value;"Rien".postln;}
 		{num==92 && val==127 && chan==2}{e[\sample16].value;"Rien".postln;}
 		//device (sur launch ctrl XL)
 		{num==105 && val==127 }{e[\init].value;"Initialisation".postln;}
 		// Mute (sur launch ctrl XL)
 		{num==106 && val==127 }{e[\quit].value;"quit".postln;}
-		// Solo (sur launch ctrl XL)
-		{num==107 && val==127 }{
-			~freeze = val.linexp(0, 127, 0, 1);
-			~one.set(\t_trig, ~freeze);
-			"freeze".postln;
-		}
 		//record arm (sur launch ctrl XL)
 		{num==108 && val==127 }{e[\mayday].value;"Panique bouton".postln;}
 		{true}{nil};
@@ -436,6 +413,12 @@
 	MIDIFunc.cc({
 		arg val, ccNum, channel;
 		[val, ccNum, channel].postln;
+
+		if(ccNum==107, {
+			~freeze = val.linexp(0, 127, 0, 1);
+			~one.set(\trig, ~freeze);
+			"freeze".postln;
+		});
 
 		if(ccNum == 77 /*&& channel == 1*/, {
 			~volumeSynth = val.linexp(0, 127, 0.001, 0.7);
@@ -597,16 +580,41 @@
 
 		if(ccNum == 13 /*&& channel == 1*/,{
 			~dur = val.linlin(0,127,0.01,0.4);
-			~g.do({ arg n; n.set(\baseDur, ~dur) });
+			~rqGran = val.linlin(0,127,0.01,1);
+			~g.do({ arg n; n.set(\baseDur, ~dur, \rq, ~rqGran) });
 			"durée granulateur".postln;
 			~dur.postln;
+			"rq granulateur".postln;
+			~rqGran.postln;
 		});
 
 		if(ccNum == 14 /*&& channel == 1*/,{
 			~rateGran = val.linlin(0,127,0.4, 2);
-			~g.do({ arg n; n.set(\rate, ~rateGran) });
+			~freqFilter = val.linlin(0,127,20,7000);
+			~g.do({ arg n; n.set(\rate, ~rateGran, \freqFilter, ~freqFilter)});
 			"rate granulateur".postln;
 			~rateGran.postln;
+			"frequence filtre granulateur".postln;
+			~freqFilter.postln;
+		});
+		// volume cloches
+	/*	if(ccNum == 32 /*&& channel == 1*/,{
+			~volCloches = val.linlin(0,127,0.01, 0.5);
+			~cloches.set(\amp, ~volCloches);
+			"volume cloches".postln;
+			~volCloches.postln;
+		});*/
+
+	//volume des samples || enfin !!
+		if (ccNum == 36, {
+			~volSamples = val.linlin(0,127,0,2);
+			~saturator.set(\amp, ~volSamples);
+			"Volume samples".postln;
+			~volSamples.postln;
+		});
+
+		if(ccNum == 105 /*&& channel == 1*/,{
+			e[\loadPresets].value;"Load Presets".postln;
 		});
 
 		if(ccNum == 105 /*&& channel == 1*/,{
