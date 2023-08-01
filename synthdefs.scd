@@ -23,10 +23,10 @@ SynthDef(\AudioInputStereoHpf, {
 }).add;
 
 SynthDef(\AudioInputStereo, {
-	arg input = 0, out = 0, amp = 0;
+	arg input = 0, out = 0, amp = 1;
     var sig;
     sig = SoundIn.ar(input); // entrée carte son
-	sig = sig * amp.dbamp.lag(1);
+	sig = sig * amp;
 	sig = Pan2.ar(sig);
 	Out.ar(out, sig); //sortie directe a un bus
 }).add;
@@ -115,7 +115,7 @@ SynthDef(\bass, {
 
 //nappes cloches
 SynthDef(\cloches, {
-arg out=0, amp=0.5, freqs=#[0,0,0,0,0,0,0,0,0,0,0,0], rings=#[0,0,0,0,0,0,0,0,0,0,0,0], atk=5, sus=7, rel=6, pan=0;
+arg out=0, amp=0.4, freqs=#[0,0,0,0,0,0,0,0,0,0,0,0], rings=#[0,0,0,0,0,0,0,0,0,0,0,0], atk=5, sus=7, rel=6, pan=0;
 var sig, env, trig;
 
 env = EnvGen.kr(Env.linen(atk, sus, rel, amp, 4), doneAction: Done.freeSelf);
@@ -146,7 +146,7 @@ sig = Pan2.ar(sig*env, pan);
 
 //Granulateur
 SynthDef(\clarGran,{
-	arg sync=1, dens=20, gDur=0.1, durRand=1, buf=0, rate=1, pos=0, posSpeed=0, posRand=0, grainEnv=(-1), pan=0, panHz=0.1, panRand=0, atk=1, sus=1, rel=1, c0=1, c1=2, amp=1, out;
+	arg sync=1, dens=20, gDur=0.1, durRand=1, buf=0, rate=1, pos=0, posSpeed=0, posRand=0, grainEnv=(-1), pan=0, panHz=0.1, panRand=0, atk=1, sus=1, rel=1, c0=1, c1=2, amp=1, out=0, rq=1, freqFilter=1500;
 
 	var sig, env, densCtrl, durCtrl, posCtrl, panCtrl;
 
@@ -175,6 +175,7 @@ SynthDef(\clarGran,{
 		grainEnv
 	);
 
+	sig = BPF.ar(sig, freqFilter, rq);
 	sig = sig * env * amp;
 
 	Out.ar(out,sig);
@@ -224,6 +225,31 @@ SynthDef(\granRadio,{
 
 //VSTPlugin.pluginList(s);
 
+SynthDef(\cricket, {
+	arg freq=55, amp=0.1, out=0, pan=0, gate=1, harmo=2500, sus=0.2;
+	var sig, env, sig1, sig2, sig3, sig4, band1, band2, band3, band4;
+
+	env = EnvGen.ar(Env([0,1,1,0],[0.1,sus,0.1], -5),  gate, doneAction:2);
+
+/*	freq = Rand(45, 75);
+	harmo = Rand(2450, 2800);*/
+
+	sig1 = Formant.ar(freq, harmo, 77)*0.5;
+	band1 = BPF.ar(sig1, 50, 0.01);
+	sig2 = Formant.ar(freq, harmo, 77)*0.3;
+	band2 = BPF.ar(sig2, 2500, 0.01);
+	sig3 = Formant.ar(freq, 8000, 100)*0.3;
+	band3 = BPF.ar(sig3, 8000, 0.02);
+	sig4 = Formant.ar(freq, harmo, 50)*0.2;
+	band4 = BPF.ar(sig4, 12000, 0.02);
+
+	sig = (sig1+sig2+sig3+sig4) * env * amp;
+	sig = Pan2.ar(sig);
+
+	Out.ar(out, sig);
+
+}).add;
+
 SynthDef(\vstDelay, {
 	arg in, out, mix, ms, phase, fdback, lc;
 	var sig;
@@ -266,7 +292,7 @@ SynthDef(\delay, {
 	var sig, dry, wet;
 
 	dry = In.ar(in, 1);
-	wet = CombL.ar(dry, 0.5, [LFNoise0.kr(0.5).exprange(0.15,0.45), SinOsc.kr(0.5).exprange(0.1,0.4), SinOsc.kr(0.3).exprange(0.2,0.7)], decay);
+	wet = CombL.ar(dry, 0.5, [LFNoise1.kr(0.02).exprange(0.15,0.45), SinOsc.kr(0.1).exprange(0.1,0.4), SinOsc.kr(0.05).exprange(0.2,0.7)], decay);
 	wet = Pan2.ar(wet,  LFNoise1.kr(1));
 
 	sig = XFade2.ar(dry, wet, mix*2-1, amp);
@@ -303,22 +329,22 @@ SynthDef(\satu, {
 	dry = In.ar(in, 2);
 	wet = (In.ar(in, 2)*saturation).fold2(1)*0.2;
 
-	sig = XFade2.ar(dry, wet, mix*2-1, amp);
+	sig = XFade2.ar(dry, wet, mix*2-1);
 	sig = LPF.ar(sig, freqLpf);
 	sig = HPF.ar(sig, freqHpf);
 
-	Out.ar(out,sig);
+	Out.ar(out,sig*amp);
 }).add;
 
 //Freeze
 SynthDef(\radio, {
-	arg amp=0.5, t_trig=1, in=0, out=0, size=2048, freqHpf=120;
+	arg amp=0.5, trig=0, in=0, out=0, size=2048, freqHpf=0;
 	var sig, chain, env;
 
     sig = SoundIn.ar(in, 1);
 
     chain = FFT(LocalBuf(size, 1), sig);
-	chain = PV_MagFreeze(chain, Trig.kr(t_trig, 2));
+	chain = PV_MagFreeze(chain, trig);
 
 	sig = IFFT(chain) * amp;
 	sig = HPF.ar(sig, freqHpf);
@@ -326,3 +352,4 @@ SynthDef(\radio, {
 
 	Out.ar(out, sig);
 }).add;
+

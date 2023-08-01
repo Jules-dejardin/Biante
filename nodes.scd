@@ -14,6 +14,7 @@
 		~brickWallGrp = Group.after(~saturationGrp);
 		~delayGrp = Group.after(~brickWallGrp); // a bouger si je fait un chainage autre
 		~reverbGrp = Group.after(~delayGrp);
+		// ~samplesGrp = Group.after(~reverbGrp);
 		~delayValhGrp = Group.after(~reverbGrp);
 		~massiveValhGrp = Group.after(~delayValhGrp);
 
@@ -74,7 +75,6 @@
 			~delayGrp
 		);
 
-
 		~reverbSynth = Synth.new(
 			\reverb,
 			[
@@ -88,6 +88,17 @@
 			],
 			~reverbGrp
 		);
+
+	/*	~mixSamples = Synth.new(
+			\AudioInputStereo,
+			[
+				\amp, 1,
+				\input, ~bus[\samples],
+				\out, ~out,
+			],
+			~samplesGrp
+		);*/
+
 	});
 };
 

@@ -3,6 +3,7 @@
 ~makeBusses = {
 
 	~bus = Dictionary.new;
+	~bus.add(\samples -> Bus.audio(s,2));
 	~bus.add(\reverb -> Bus.audio(s, 2));
 	~bus.add(\fftBrick -> Bus.audio(s, 2));
 	~bus.add(\delay -> Bus.audio(s, 2));
