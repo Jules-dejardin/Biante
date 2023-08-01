@@ -617,8 +617,5 @@
 			e[\loadPresets].value;"Load Presets".postln;
 		});
 
-		if(ccNum == 105 /*&& channel == 1*/,{
-			e[\loadPresets].value;"Load Presets".postln;
-		});
 	});
 };
