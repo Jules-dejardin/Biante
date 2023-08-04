@@ -23,6 +23,35 @@
 		// ~vstMassiveSynth.savePreset("dirtyVerb1");
 	});
 
+	e.add(\event1 -> {
+		~time = Array.fill(100, {rand(4.1,15)});
+		~time2 = Array.fill(100, {rand(1.8,4)});
+		~bloup.stop;
+		~waterBell.stop;
+		~bullenap.free;
+
+~waterBell = Routine{
+	inf.do{
+		Synth(\audioBuf, [\buf, ~buffers[\eau][[0,1,2,3,4,5,6].choose], \loop, 0, \out, ~bus[\satura], \amp, 0.8, \pan, rrand(-0.8,0.8),\rate, rrand(0.6,0.8) ],~mainGrp);
+		~time.choose.asStream.wait;
+		Synth(\audioBuf, [\buf, ~buffers[\eau][[0,1,2,3,4,5,6].choose], \loop, 0, \out, ~bus[\satura], \amp, 0.8, \pan, rrand(-0.8,0.8), \rate, rrand(0.5,0.8) ],~mainGrp);
+		~time2.choose.asStream.wait;
+	};
+};
+~waterBell.play;
+
+~bloup = Routine{
+	inf.do{
+		var time = Array.fill(50, {rand(1,15)}).choose.asStream;
+				Synth(\audioBuf, [\buf, ~buffers[\eaudouce][[0,1,2,3,4,5,6,7,8,9].choose], \loop, 0, \out, ~bus[\satura], \amp, 0.9, \atk, rrand(0.5,1), \curve, 4, \rate, rrand(1.2,1.5)],~mainGrp);
+		~time2.choose.asStream.wait;
+	};
+};
+~bloup.play;
+
+	~bullenap = Synth(\audioBuf, [\buf, ~buffers[\bullenap][0], \loop, 1, \out, ~out, \amp, 0.7],~mainGrp);
+	});
+
 	e.add(\event9
 		-> {
 			~boucheGran.stop;
@@ -139,7 +168,6 @@
 
 		~granOizo.stop;
 		~boucheGran.stop;
-		~mer.stop;
 		~chord.stop;
 		//~g.do({ arg n; n.set(\gate, 0) });
 
@@ -269,7 +297,7 @@
 
 	e.add(\sample5 -> {
 		(
-
+			Synth(\audioBuf, [\buf, ~buffers[\eau][[0,1,2,3,4,5,6].choose], \loop, 0, \out, ~bus[\satura], \amp, 0.9],~mainGrp);
 		)
 	});
 
@@ -325,15 +353,18 @@
 
 	e.add(\sample14 -> {
 		(
-			~cri = Routine{
-	var period = 0.2;
+	~cri = Routine{
+				var period = Array.fill(20, { rrand(1,4) }).choose;
+				var sustain = (period/4)-0.15;
 	4.do{
-		Synth(\cricket, [\amp, 0.1, \sus, 0.15, \harmo, 3000, \freq, 55, \out, ~bus[\satura]]);
+					var freq =  Array.fill(20, { rrand(2400, 2500) }).choose.asStream;
+		Synth(\cricket, [\amp, 0.1, \sus, sustain, \harmo, freq, \freq, 55, \out, ~bus[\satura]]);
 		period.wait;
 	};
 };
 ~cri.play;
 	)});
+
 	e.add(\sample15 -> {()});
 	e.add(\sample16 -> {()});
 	/*Synth(\audioBuf, [\buf, ~buffers[\percu][0], \loop, 0, \out, ~bus[\satura], \amp, 0.9],~mainGrp);*/
@@ -350,10 +381,13 @@
 		~g.do({ arg n; n.set(\gate, 0, \rel, 10) });
 		~medium.stop;
 		~cloches.stop;
+		~bloup.stop;
+		~waterBell.stop;
+		~bullenap.free;
 	});
 
 	e.add(\mayday -> {
-		MIDIIn.disconnectAll;
+		// MIDIIn.disconnectAll;
 		Server.killAll;
 	});
 
@@ -401,6 +435,12 @@
 		{num==105 && val==127 }{e[\init].value;"Initialisation".postln;}
 		// Mute (sur launch ctrl XL)
 		{num==106 && val==127 }{e[\quit].value;"quit".postln;}
+		// Solo (sur launch ctrl XL)
+		// {num==107 && val==127 }{
+		// ~freeze = val.linexp(0, 127, 0, 1);
+		// ~one.set(\t_trig, ~freeze);
+		// "freeze".postln;
+		// }
 		//record arm (sur launch ctrl XL)
 		{num==108 && val==127 }{e[\mayday].value;"Panique bouton".postln;}
 		{true}{nil};

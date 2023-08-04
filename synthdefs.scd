@@ -1,12 +1,13 @@
 
 //Générateurs de sons
 SynthDef(\audioBuf, {
-	arg buf, out = 0, amp=1, pos=0, t_trig=1, rate=1, loop=0, rev=0;
-    var sig;
+	arg buf, out = 0, amp=1, pos=0, t_trig=1, rate=1, loop=0, rev=0, pan=0, curve=0, atk=0.001;
+    var sig, env;
 
+	env = EnvGen.kr(Env.new([0,1,1],[atk,1],curve));
     sig = PlayBuf.ar(1, buf, BufRateScale.kr(buf) * rate, t_trig, BufFrames.kr(buf) * pos, loop: loop, doneAction:2);
-	sig = sig * amp;
-	sig = Pan2.ar(sig);
+	sig = sig * env * amp ;
+	sig = Pan2.ar(sig, pan);
 	Out.ar(out, sig);
 }).add;
 
