@@ -44,12 +44,12 @@ h1 >> blip([0,2], dur=linvar([0.01,0.08]), oct=var([5,4,5,4,6],1), room2=.2) + (
 ### Session 1
 
 g2 >> play("<X><...*><----=><k..>", dur=.25, rate=[1,2,3,1,2], pan=[-1,0,1,0,-1])
-g2.ampfadein()
+g2.ampfade()
 
 g2.ampfadeout()
 
 
-rr >> play("[XXX]", dur=.5, sample=PRand(0,2), pan=var([-1,0,1,0],PRand(2,8)), rate=linvar([1,3],64, start=Clock.mod(4)))#.ampfadein(48)
+rr >> play("[XXX]", dur=.5, sample=PRand(0,2), pan=var([-1,0,1,0],PRand(2,8)), rate=linvar([1,3],64, start=Clock.mod(4)))#.ampfade(48)
 rr.rate=0
 rr.pan=0
 
@@ -67,7 +67,7 @@ a3 >> blip([0], dur=.25, oct=linvar([6,9,7,5,8,4]), pan=linvar([-1,1],PRand(2,16
 
 a3.ampfadeout()
 
-k9 >> play('<b{.b[bb]b[bbbbb]}><[vv]>', rate=linvar([.1,2], 16)).ampfadein(32)#.stop()
+k9 >> play('<b{.b[bb]b[bbbbb]}><[vv]>', rate=linvar([.1,2], 16)).ampfade(32)#.stop()
 
 k9.stop()
 
